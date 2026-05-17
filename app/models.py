@@ -1,43 +1,42 @@
-from app import BancoDeDados
-from datetime import datetime, timezone
+from app.extensions import db, login_manager
+from flask_login import UserMixin
+from datetime import date
 
-class Produto(BancoDeDados.Model):
-    id = BancoDeDados.Column(BancoDeDados.Integer, primary_key=True)
-    nome = BancoDeDados.Column(BancoDeDados.String(100), nullable=False, unique=True)
 
-    lancamentos = BancoDeDados.relationship('LancamentoFinanceiro', backref='produto_ref')
+# LOGIN
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, int(user_id))
 
-class Fornecedor(BancoDeDados.Model):
-    id = BancoDeDados.Column(BancoDeDados.Integer, primary_key=True)
-    nome = BancoDeDados.Column(BancoDeDados.String(100), nullable=False, unique=True)
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    categorias = db.relationship("CategoriaFinanceira", backref="usuario", lazy=True)
+    lancamentos = db.relationship("LancamentoFinanceiro", backref="usuario", lazy=True)
 
-    lancamentos = BancoDeDados.relationship('LancamentoFinanceiro', backref='fornecedor_ref')
-    
-class LancamentoFinanceiro(BancoDeDados.Model):
 
-    id = BancoDeDados.Column(BancoDeDados.Integer, primary_key=True)
-    data = BancoDeDados.Column(BancoDeDados.DateTime, default=datetime.now(timezone.utc))
+# FINANCEIRO
+class CategoriaFinanceira(db.Model): # A categoria serve para agrupar e gerar relatório.
+    __table_args__ = (db.UniqueConstraint("nome", "user_id", name="uq_categoria_nome_user"),) # restrição para evitar duplicadas, não repetir categorias
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(80), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    produto_id = BancoDeDados.Column(
-        BancoDeDados.Integer,
-        BancoDeDados.ForeignKey('produto.id'),
-        nullable=False
-    )
-    fornecedor_id = BancoDeDados.Column(
-        BancoDeDados.Integer,
-        BancoDeDados.ForeignKey('fornecedor.id'),
-        nullable=False
-    )
-    tipo_custo = BancoDeDados.Column(BancoDeDados.String(50), nullable=False)
-    conta_origem = BancoDeDados.Column(BancoDeDados.String(50), nullable=False)
-    forma_pagamento = BancoDeDados.Column(BancoDeDados.String(50), nullable=False)
-    status = BancoDeDados.Column(BancoDeDados.String(20), default="Pendente")
-    valor = BancoDeDados.Column(BancoDeDados.Numeric(10, 2), nullable=False)
+class LancamentoFinanceiro(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    favorecido = db.Column(db.String(150), nullable=True) # Forncedores
+    valor = db.Column(db.Numeric(10, 2), nullable=False)
+    tipo_custo = db.Column(db.String(20), nullable=False, default="variável")
+    conta_origem = db.Column(db.String(50), nullable=True)
+    forma_pagamento = db.Column(db.String(50), nullable=True)
+    status = db.Column(db.String(20), nullable=False, default="pendente")
+    data_lancamento = db.Column(db.Date, nullable=False, default=date.today)
+    data_vencimento = db.Column(db.Date, nullable=True)
+    data_pagamento = db.Column(db.Date, nullable=True)
+    observacao = db.Column(db.Text, nullable=True)
 
-    produto = BancoDeDados.relationship('Produto')
-    fornecedor = BancoDeDados.relationship('Fornecedor')
-
-class User(BancoDeDados.Model):
-    id = BancoDeDados.Column(BancoDeDados.Integer, primary_key=True)
-    email = BancoDeDados.Column(BancoDeDados.String(120), unique=True, nullable=False)
-    password = BancoDeDados.Column(BancoDeDados.String(255), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    categoria_id = db.Column(db.Integer, db.ForeignKey("categoria_financeira.id"), nullable=False)
+    categoria = db.relationship("CategoriaFinanceira", backref="lancamentos")
