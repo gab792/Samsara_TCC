@@ -1,0 +1,43 @@
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>Samsara</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('financeiro.dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('financeiro.listar_lancamentos') }}">
+            Lançamentos
+        </a>
+
+        <a href="{{ url_for('financeiro.novo_lancamento') }}">
+            Novo lançamento
+        </a>
+
+        <a href="{{ url_for('financeiro.listar_categorias_view') }}">
+            Categorias
+        </a>
+
+        <a href="{{ url_for('financeiro.nova_categoria') }}">
+            Nova Categoria
+        </a>
+        
+        <a href="{{ url_for('financeiro.agenda') }}">
+            Agenda
+        </a>
+
+        <a href="{{ url_for('financeiro.relatorio_mensal') }}">
+            Relatórios
+        </a>
+
+        <a href="{{ url_for('main.perfil') }}">
+                Perfil
+        </a>
+        
+        <a href="{{ url_for('auth.logout') }}">
+            Sair
+        </a>
+    </nav>
+</aside>

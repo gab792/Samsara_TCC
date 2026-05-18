@@ -1,65 +1,9 @@
-/* ========================= */
-/* Página novo lançamento */
-/* ========================= */
-
-.main-content {
-    flex: 1;
-    padding: 30px;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-}
-
-/* Layout */
-.container {
-    display: flex;
-    height: 100vh;
-}
-
-
-/* Sidebar */
-.sidebar {
-    width: 220px;
-    background-color: #d54e00;
-    color: white;
-    padding: 20px;
-}
-
-.sidebar h2 {
-    margin-bottom: 30px;
-}
-
-.sidebar nav {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.sidebar nav a {
-    text-decoration: none;
-    color: #cbd5f5;
-    padding: 10px;
-    border-radius: 6px;
-    transition: 0.3s;
-}
-
-.sidebar nav a:hover {
-    background-color: #ff8e0d;
-    color: white;
-}
-
 .form-container {
+    width: 100%;
     background: white;
-    padding: 30px;
+    padding: 28px;
     border-radius: 12px;
+    border: 1px solid #e5e7eb;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
@@ -70,7 +14,7 @@ body {
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 18px 20px;
 }
 
 .form-group {
@@ -79,18 +23,19 @@ body {
 }
 
 .form-group label {
-    margin-bottom: 8px;
+    margin-bottom: 7px;
     color: #555;
+    font-size: 14px;
     font-weight: bold;
 }
 
 .form-input {
-    padding: 12px;
+    width: 100%;
+    padding: 11px 12px;
     border: 1px solid #dcdfe4;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 15px;
     background-color: #fff;
-    transition: 0.3s;
 }
 
 .form-input:focus {
@@ -99,26 +44,42 @@ body {
     box-shadow: 0 0 0 3px rgba(213, 78, 0, 0.1);
 }
 
+textarea.form-input {
+    min-height: 90px;
+    resize: vertical;
+}
+
 .full-width {
     grid-column: span 2;
 }
 
+.form-group small {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.field-error {
+    margin-top: 5px;
+    color: #b91c1c;
+    font-size: 13px;
+}
+
 .form-actions {
     display: flex;
-    gap: 15px;
-    margin-top: 30px;
+    gap: 12px;
+    margin-top: 28px;
 }
 
 .btn-submit {
     background-color: #d54e00;
     color: white;
     border: none;
-    padding: 14px 22px;
+    padding: 12px 18px;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 15px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
 }
 
 .btn-submit:hover {
@@ -129,19 +90,17 @@ body {
     background-color: #e5e7eb;
     color: #444;
     text-decoration: none;
-    padding: 14px 22px;
+    padding: 12px 18px;
     border-radius: 8px;
+    font-size: 15px;
     font-weight: bold;
-    transition: 0.3s;
 }
 
 .btn-cancel:hover {
     background-color: #d1d5db;
 }
 
-/* Responsivo */
 @media (max-width: 900px) {
-
     .form-grid {
         grid-template-columns: 1fr;
     }
@@ -154,4 +113,9 @@ body {
         flex-direction: column;
     }
 
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
 }

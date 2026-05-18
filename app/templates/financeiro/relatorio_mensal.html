@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Relatório mensal
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/financeiro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/relatorio.css') }}">
+{% endblock %}
+
+{% block content %}
+   <header class="page-header">
+        <div>
+            <h1>Relatório mensal</h1>
+            <p>Consulte os lançamentos, totais e agrupamentos por mês.</p>
+        </div>
+    </header>
+
+    <form method="GET" class="filtros-form"> 
+        <div>
+            <label for="mes">Mês</label>
+            <select name="mes" id="mes">
+                <option value="1" {% if mes == 1 %}selected{% endif %}>Janeiro</option>
+                <option value="2" {% if mes == 2 %}selected{% endif %}>Fevereiro</option>
+                <option value="3" {% if mes == 3 %}selected{% endif %}>Março</option>
+                <option value="4" {% if mes == 4 %}selected{% endif %}>Abril</option>
+                <option value="5" {% if mes == 5 %}selected{% endif %}>Maio</option>
+                <option value="6" {% if mes == 6 %}selected{% endif %}>Junho</option>
+                <option value="7" {% if mes == 7 %}selected{% endif %}>Julho</option>
+                <option value="8" {% if mes == 8 %}selected{% endif %}>Agosto</option>
+                <option value="9" {% if mes == 9 %}selected{% endif %}>Setembro</option>
+                <option value="10" {% if mes == 10 %}selected{% endif %}>Outubro</option>
+                <option value="11" {% if mes == 11 %}selected{% endif %}>Novembro</option>
+                <option value="12" {% if mes == 12 %}selected{% endif %}>Dezembro</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="ano">Ano</label>
+            <input
+                type="number"
+                name="ano"
+                id="ano"
+                value="{{ ano }}"
+            >
+        </div>
+
+        <button type="submit">
+            Gerar relatório
+        </button>
+    </form>
+
+    <section class="report-summary">
+        <div class="report-card">
+            <h3>Total geral</h3>
+            <p>{{ total_geral | moeda }}</p>
+        </div>
+
+        <div class="report-card">
+            <h3>Total pago</h3>
+            <p>{{ total_pago | moeda }}</p>
+        </div>
+
+        <div class="report-card">
+            <h3>Total pendente</h3>
+            <p>{{ total_pendente | moeda }}</p>
+        </div>
+
+        <div class="report-card">
+            <h3>Lançamentos</h3>
+            <p>{{ lancamentos|length }}</p>
+        </div>
+    </section>
+
+    <section class="report-grid">
+        <div class="report-box">
+            <h2>Total por categoria</h2>
+
+            {% if total_por_categoria %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for categoria, total in total_por_categoria.items() %}
+                            <tr>
+                                <td>{{ categoria }}</td>
+                                <td>{{ total | moeda }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="report-empty">Nenhum dado encontrado.</p>
+            {% endif %}
+        </div>
+
+        <div class="report-box">
+            <h2>Total por forma de pagamento</h2>
+
+            {% if total_por_pagamento %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Forma</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for forma, total in total_por_pagamento.items() %}
+                            <tr>
+                                <td>{{ forma }}</td>
+                                <td>{{ total | moeda }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="report-empty">Nenhum dado encontrado.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <h2 class="report-section-title">Lançamentos do mês</h2>
+
+    {% if lancamentos %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Favorecido</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Lançamento</th>
+                        <th>Pagamento</th>
+                        <th>Vencimento</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for lancamento in lancamentos %}
+                        <tr>
+                            <td>
+                                {{ lancamento.categoria.nome | padronizar_titulo }}
+                            </td>
+                            <td>{{ lancamento.favorecido or "-" }}</td>
+                            <td>{{ lancamento.valor | moeda }}</td>
+                            <td>{{ lancamento.status | status_label }}</td>
+                            <td>{{ lancamento.data_lancamento | data_br }}</td>
+                            <td>{{ lancamento.data_pagamento | data_br }}</td>
+                            <td>{{ lancamento.data_vencimento | data_br }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="report-empty">Nenhum lançamento encontrado para este período.</p>
+    {% endif %}
+{% endblock %}

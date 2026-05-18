@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if lancamento %}
+        Editar lançamento
+    {% else %}
+        Novo lançamento
+    {% endif %}
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+
+    <div class="form-container">
+        <form method="POST" class="financial-form">
+            {{ form.hidden_tag() }}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form.categoria.label }}
+                    {{ form.categoria(class="form-input")}}
+
+                    {% for error in form.categoria.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.favorecido.label }}
+                    {{ form.favorecido(class="form-input") }}
+
+                    {% for error in form.favorecido.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.tipo_custo.label }}
+                    {{ form.tipo_custo(class="form-input") }}
+
+                    {% for error in form.tipo_custo.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.conta_origem.label }}
+                    {{ form.conta_origem(class="form-input") }}
+
+                    {% for error in form.conta_origem.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.forma_pagamento.label }}
+                    {{ form.forma_pagamento(class="form-input") }}
+
+                    {% for error in form.forma_pagamento.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.status.label }}
+                    {{ form.status(class="form-input") }}
+
+                    {% for error in form.status.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.valor.label }}
+                    {{ form.valor(class="form-input") }}
+
+                    {% for error in form.valor.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.data_lancamento.label }}
+                    {{ form.data_lancamento(class="form-input") }}
+
+                    {% for error in form.data_lancamento.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.data_vencimento.label }}
+                    {{ form.data_vencimento(class="form-input") }}
+
+                    {% for error in form.data_vencimento.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.data_pagamento.label }}
+                    {{ form.data_pagamento(class="form-input") }}
+
+                    {% for error in form.data_pagamento.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="form-group full-width">
+                    {{ form.observacao.label }}
+                    {{ form.observacao(class="form-input") }}
+
+                    {% for error in form.observacao.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                {{ form.btnSubmit(class="btn-submit") }}
+
+                <a href="{{ url_for('financeiro.listar_lancamentos') }}" class="btn-cancel">
+                    Voltar para lançamentos
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

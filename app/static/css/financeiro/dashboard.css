@@ -1,0 +1,158 @@
+.main-content > h1 {
+    margin-bottom: 24px;
+    font-size: 2rem;
+    color: #111827;
+}
+
+/* CARDS RESUMO */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.card p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Card 1: total pago */
+.card:nth-child(1) {
+    border-left: 5px solid #22c55e;
+}
+
+/* Card 2: total pendente */
+.card:nth-child(2) {
+    border-left: 5px solid #f59e0b;
+}
+
+/* Card 3: total vencido */
+.card:nth-child(3) {
+    border-left: 5px solid #ef4444;
+}
+
+/* GRID PRINCIPAL */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.8fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.content-area,
+.chart-area {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.content-area h3,
+.chart-area h3 {
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+    color: #111827;
+}
+
+/* GRÁFICO */
+.chart-area {
+    min-height: 360px;
+}
+
+.chart-area canvas {
+    width: 100%;
+    max-height: 260px;
+}
+
+/* TABELA DE ÚLTIMOS LANÇAMENTOS */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.data-table th {
+    background: #f9fafb;
+    color: #374151;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.data-table td {
+    color: #111827;
+    font-size: 0.9rem;
+}
+
+.data-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.content-area > p {
+    color: #6b7280;
+}
+
+/* MINI CARDS */
+.extra-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.mini-card {
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.mini-card h4 {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.mini-card p {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #111827;
+}
+

@@ -1,0 +1,275 @@
+/* Cabeçalho das páginas financeiras */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin-bottom: 4px;
+}
+
+.page-header p {
+    color: #6b7280;
+}
+
+
+/* Botões */
+
+.btn {
+    display: inline-block;
+    padding: 9px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #d54e00;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #ff8e0d;
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+
+/* Tabelas */
+
+.table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1150px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.data-table th {
+    background: #f9fafb;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.data-table td {
+    color: #111827;
+    font-size: 15px;
+}
+
+.data-table tr:hover {
+    background: #f9fafb;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* Ações da tabela */
+
+.table-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.table-actions form {
+    display: inline;
+}
+
+.table-actions a,
+.table-actions button {
+    padding: 7px 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.action-edit {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.action-pay {
+    background: #0dc44d;
+    color: white;
+}
+
+.action-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.action-edit:hover,
+.action-pay:hover,
+.action-delete:hover {
+    opacity: 0.85;
+}
+
+/* Resumo abaixo da tabela */
+
+.table-summary {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 16px;
+    padding: 14px 16px;
+
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.table-summary span {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.table-summary strong {
+    color: #111827;
+    font-size: 18px;
+}
+
+/* Estado vazio */
+
+.empty-state {
+    margin-top: 20px;
+    padding: 16px;
+    background: white;
+    border: 1px dashed #d1d5db;
+    border-radius: 10px;
+    color: #6b7280;
+}
+
+
+/* Filtros */
+
+.filtros-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: end;
+    margin: 20px 0;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.filtros-form div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filtros-form label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.filtros-form input,
+.filtros-form select {
+    min-width: 150px;
+    padding: 9px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+}
+
+.filtros-form button,
+.filtros-form a {
+    padding: 8px 11px;
+    border: none;
+    border-radius: 7px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.filtros-form button {
+    background: #d54e00;
+    color: white;
+}
+
+.filtros-form a {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+
+/* Status */
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-pago {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-pendente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+
+/* Cards simples */
+
+.cards {
+    display: flex;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.card {
+    flex: 1;
+    padding: 18px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.card h3 {
+    margin-bottom: 8px;
+    color: #6b7280;
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+}

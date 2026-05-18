@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Lançamentos
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/financeiro.css') }}">
+{% endblock %}
+
+{% block content %}
+    <header class="page-header">
+        <div>
+            <h1>Lançamentos</h1>
+            <p>Consulte, filtre e gerencie os lançamentos financeiros.</p>
+        </div>
+
+        <a class="btn" href="{{ url_for('financeiro.novo_lancamento') }}">
+            Novo lançamento
+        </a>
+    </header>
+
+    <form method="GET" class="filtros-form"> <!-- Filtragem -->
+
+        <div> <!-- Filtrar Status -->
+            <label for="status">Status</label>
+            <select name="status" id="status">
+                <option value="">Todos</option>
+
+                <option value="pendente" {% if status_selecionado == "pendente" %}selected{% endif %}>
+                    Pendente
+                </option>
+
+                <option value="pago" {% if status_selecionado == "pago" %}selected{% endif %}>
+                    Pago
+                </option>
+            </select>
+        </div>
+
+        <div> <!-- Filtro Mes -->
+            <label for="mes">Mês</label>
+            <select name="mes" id="mes">
+                <option value="">Todos</option>
+
+                <option value="1" {% if mes_selecionado == "1" %}selected{% endif %}>Janeiro</option>
+                <option value="2" {% if mes_selecionado == "2" %}selected{% endif %}>Fevereiro</option>
+                <option value="3" {% if mes_selecionado == "3" %}selected{% endif %}>Março</option>
+                <option value="4" {% if mes_selecionado == "4" %}selected{% endif %}>Abril</option>
+                <option value="5" {% if mes_selecionado == "5" %}selected{% endif %}>Maio</option>
+                <option value="6" {% if mes_selecionado == "6" %}selected{% endif %}>Junho</option>
+                <option value="7" {% if mes_selecionado == "7" %}selected{% endif %}>Julho</option>
+                <option value="8" {% if mes_selecionado == "8" %}selected{% endif %}>Agosto</option>
+                <option value="9" {% if mes_selecionado == "9" %}selected{% endif %}>Setembro</option>
+                <option value="10" {% if mes_selecionado == "10" %}selected{% endif %}>Outubro</option>
+                <option value="11" {% if mes_selecionado == "11" %}selected{% endif %}>Novembro</option>
+                <option value="12" {% if mes_selecionado == "12" %}selected{% endif %}>Dezembro</option>
+            </select>
+        </div>
+
+        <div> <!-- Filtro Ano -->
+            <label for="ano">Ano</label>
+            <input
+                type="number"
+                name="ano"
+                id="ano"
+                value="{{ ano_selecionado or '' }}"
+                placeholder="Ex: 2026"
+            >
+        </div>
+
+        <div> <!-- Filtro Categoria -->
+            <label for="categoria_id">Categoria</label>
+
+            <select name="categoria_id" id="categoria_id">
+                <option value="">Todas</option>
+
+                {% for categoria in categorias %}
+                    <option
+                        value="{{ categoria.id }}"
+                        {% if categoria_selecionada == categoria.id|string %}selected{% endif %}
+                    >
+                        {{ categoria.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit">
+            Filtrar
+        </button>
+
+        <a href="{{ url_for('financeiro.listar_lancamentos') }}">
+            Limpar filtros
+        </a>
+    </form>
+
+    {% if lancamentos %} <!-- Tabela de Lançamentos -->
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Favorecido</th>
+                   <!-- Caso o nosso cliente ainda queira essas infos na tabela
+                        <th>Tipo</th>
+                        <th>Origem</th>
+                        <th>Pagamento</th>
+                    -->
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Lançamento</th>
+                        <th>Pagamento</th>
+                        <th>Vencimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for lancamento in lancamentos %}
+                        <tr>
+                            <td>
+                                {{ lancamento.categoria.nome | padronizar_titulo }}
+                            </td>
+
+                            <td>
+                                {{ lancamento.favorecido or "-" }}
+                            </td>
+                        <!-- Caso o nosso cliente ainda queira essas infos na tabela
+                            <td>
+                                {{ lancamento.tipo_custo | tipo_custo_label }}
+                            </td>
+
+                            <td>
+                                {{ lancamento.conta_origem or "-" }}
+                            </td>
+
+                            <td>
+                                {{ lancamento.forma_pagamento or "-" }}
+                            </td>
+                        -->
+                            <td>
+                                {{ lancamento.valor | moeda}}
+                            </td>
+
+                            <td>
+                                <span class="status-badge status-{{ lancamento.status }}">
+                                    {{ lancamento.status | status_label }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ lancamento.data_lancamento | data_br}}
+                            </td>
+
+                            <td>
+                                {{ lancamento.data_pagamento | data_br}}
+                            </td>
+                            
+                            <td>
+                                {{ lancamento.data_vencimento | data_br }}
+                            </td>
+
+                            <td> <!-- AÇÕES -->
+                                <div class="table-actions">
+                                    <a class="action-edit" href="{{ url_for('financeiro.editar_lancamento', id=lancamento.id) }}">
+                                        Editar
+                                    </a>
+
+                                    {% if lancamento.status == "pendente" %}
+                                        <form method="POST" action="{{ url_for('financeiro.pagar_lancamento', id=lancamento.id) }}">
+                                            <button class="action-pay" type="submit">
+                                                Pagar
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                    <form method="POST" action="{{ url_for('financeiro.deletar_lancamento_view', id=lancamento.id) }}">
+                                        <button class="action-delete" type="submit">
+                                            Deletar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="table-summary">
+            <span>Total filtrado</span>
+            <strong>{{ total_filtrado | moeda }}</strong>
+        </div>
+    {% else %}
+        <p class="empty-state">Nenhum lançamento cadastrado.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Dashboard Financeiro
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Dashboard Financeiro</h1>
+
+    <section class="cards"> <!-- cards resumo dos totais -->
+
+        <div class="card"> <!-- Total pago no mes -->
+            <h3>Total pago no mês</h3>
+            <p>{{ total_mes | moeda}}</p>
+        </div>
+
+        <div class="card"> <!-- Total pendente -->
+            <h3>Total pendente</h3>
+            <p>{{ total_pendente | moeda }}</p>
+        </div>
+
+        <div class="card"> <!-- Total vencido -->
+            <h3>Total vencido</h3>
+            <p>{{ total_vencido | moeda }}</p>
+        </div>
+
+    </section>
+
+    {% if qtd_vencidas > 0 %} <!-- aviso se houver contas vencidas -->
+        <div class="flash warning">
+            Você tem {{ qtd_vencidas }} conta(s) vencida(s).
+            <a href="{{ url_for('financeiro.agenda') }}">
+                Ver agenda
+            </a>
+        </div>
+    {% endif %}
+
+    <section class="dashboard-grid">
+        <div class="chart-area">
+            <h3>Gastos pagos por mês - {{ grafico_mensal.ano }}</h3>
+
+            <canvas id="graficoGastosMensais"></canvas>
+        </div>
+
+        <div class="content-area"> <!-- Tabela de últimos lançamentos -->
+            <h3>Últimos lançamentos</h3>
+
+            {% if ultimos_lancamentos %} <!-- tabela de ultimos lançamentos -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Status</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for lancamento in ultimos_lancamentos %}
+                                <tr>
+                                    <td>{{ lancamento.categoria.nome | padronizar_titulo }}</td>
+                                    <td>{{ lancamento.status | status_label }}</td>
+                                    <td>{{ lancamento.valor | moeda }}</td>
+                                    <td>{{ lancamento.data_lancamento | data_br }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>Nenhum lançamento cadastrado.</p>
+            {% endif %}
+
+            <div class="extra-cards"> <!-- cards p/ visão geral + acesso rapido + outras coisas -->
+                <div class="mini-card">
+                    <h4>Lançamentos no mês</h4>
+                    <p>{{ qtd_lancamentos_mes }}</p>
+                </div>
+
+                <div class="mini-card">
+                    <h4>Contas vencidas</h4>
+                    <p>{{ qtd_vencidas }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById("graficoGastosMensais");
+
+        const labels = {{ grafico_mensal.labels | tojson }};
+        const valores = {{ grafico_mensal.valores | tojson }};
+
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Total pago",
+                        data: valores,
+                        borderWidth: 2,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

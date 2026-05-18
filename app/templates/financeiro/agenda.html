@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Agenda Financeira
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/agenda.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="agenda-header">
+        <h1>Agenda Financeira</h1>
+        <p>Controle vencimentos, pagamentos e contas pendentes.</p>
+    </div>
+
+    <section class="agenda-summary">
+        <div class="agenda-card agenda-card-danger">
+            <h3>Vencidas</h3>
+            <p>{{ vencidas|length }}</p>
+        </div>
+
+        <div class="agenda-card agenda-card-warning">
+            <h3>Vencem hoje</h3>
+            <p>{{ vencem_hoje|length }}</p>
+        </div>
+
+        <div class="agenda-card agenda-card-info">
+            <h3>Próximos 7 dias</h3>
+            <p>{{ proximos_7|length }}</p>
+        </div>
+
+        <div class="agenda-card agenda-card-success">
+            <h3>Total pendente</h3>
+            <p>{{ total_pendente | moeda }}</p>
+        </div>
+    </section>
+
+    <section class="agenda-section">
+        <div class="agenda-section-header">
+            <h2>Vencidas</h2>
+            <span>{{ vencidas|length }} conta(s)</span>
+        </div>
+
+        {% if vencidas %}
+            <div class="agenda-list">
+                {% for lancamento in vencidas %}
+                    <div class="agenda-item agenda-item-danger">
+                        <div class="agenda-item-content">
+                            <strong>
+                                {{ lancamento.categoria.nome | padronizar_titulo }}
+                            </strong>
+
+                            {% if lancamento.favorecido %}
+                                <p>{{ lancamento.favorecido }}</p>
+                            {% endif %}
+
+                            <small>
+                                Venceu em {{ lancamento.data_vencimento | data_br }}
+                            </small>
+                        </div>
+
+                        <div class="agenda-item-side">
+                            <span class="agenda-value">
+                                {{ lancamento.valor | moeda }}
+                            </span>
+
+                            <form method="POST" action="{{ url_for('financeiro.pagar_lancamento', id=lancamento.id) }}">
+                                <button type="submit">Marcar como pago</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="agenda-empty">Nenhuma conta vencida.</p>
+        {% endif %}
+    </section>
+
+    <section class="agenda-section">
+        <div class="agenda-section-header">
+            <h2>Vencem hoje</h2>
+            <span>{{ vencem_hoje|length }} conta(s)</span>
+        </div>
+
+        {% if vencem_hoje %}
+            <div class="agenda-list">
+                {% for lancamento in vencem_hoje %}
+                    <div class="agenda-item agenda-item-warning">
+                        <div class="agenda-item-content">
+                            <strong>
+                                {{ lancamento.categoria.nome | padronizar_titulo }}
+                            </strong>
+
+                            {% if lancamento.favorecido %}
+                                <p>{{ lancamento.favorecido }}</p>
+                            {% endif %}
+
+                            <small>
+                                Vence hoje
+                            </small>
+                        </div>
+
+                        <div class="agenda-item-side">
+                            <span class="agenda-value">
+                                {{ lancamento.valor | moeda }}
+                            </span>
+
+                            <form method="POST" action="{{ url_for('financeiro.pagar_lancamento', id=lancamento.id) }}">
+                                <button type="submit">Marcar como pago</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="agenda-empty">Nenhuma conta vence hoje.</p>
+        {% endif %}
+    </section>
+
+    <section class="agenda-section">
+        <div class="agenda-section-header">
+            <h2>Próximos 7 dias</h2>
+            <span>{{ proximos_7|length }} conta(s)</span>
+        </div>
+
+        {% if proximos_7 %}
+            <div class="agenda-list">
+                {% for lancamento in proximos_7 %}
+                    <div class="agenda-item agenda-item-info">
+                        <div class="agenda-item-content">
+                            <strong>
+                                {{ lancamento.categoria.nome | padronizar_titulo }}
+                            </strong>
+
+                            {% if lancamento.favorecido %}
+                                <p>{{ lancamento.favorecido }}</p>
+                            {% endif %}
+
+                            <small>
+                                Vence em {{ lancamento.data_vencimento | data_br }}
+                            </small>
+                        </div>
+
+                        <div class="agenda-item-side">
+                            <span class="agenda-value">
+                                {{ lancamento.valor | moeda }}
+                            </span>
+
+                            <form method="POST" action="{{ url_for('financeiro.pagar_lancamento', id=lancamento.id) }}">
+                                <button type="submit">Marcar como pago</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="agenda-empty">Nenhuma conta vence nos próximos 7 dias.</p>
+        {% endif %}
+    </section>
+
+    <section class="agenda-section">
+        <div class="agenda-section-header">
+            <h2>Próximos 30 dias</h2>
+            <span>{{ proximos_30|length }} conta(s)</span>
+        </div>
+
+        {% if proximos_30 %}
+            <div class="agenda-list">
+                {% for lancamento in proximos_30 %}
+                    <div class="agenda-item agenda-item-info">
+                        <div class="agenda-item-content">
+                            <strong>
+                                {{ lancamento.categoria.nome | padronizar_titulo }}
+                            </strong>
+
+                            {% if lancamento.favorecido %}
+                                <p>{{ lancamento.favorecido }}</p>
+                            {% endif %}
+
+                            <small>
+                                Vence em {{ lancamento.data_vencimento | data_br }}
+                            </small>
+                        </div>
+
+                        <div class="agenda-item-side">
+                            <span class="agenda-value">
+                                {{ lancamento.valor | moeda }}
+                            </span>
+
+                            <form method="POST" action="{{ url_for('financeiro.pagar_lancamento', id=lancamento.id) }}">
+                                <button type="submit">Marcar como pago</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="agenda-empty">Nenhuma conta vence nos próximos 30 dias.</p>
+        {% endif %}
+    </section>
+{% endblock %}

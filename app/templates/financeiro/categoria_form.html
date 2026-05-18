@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ titulo }}
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/financeiro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+
+    <div class="form-container">
+        <form method="POST" class="financial-form">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.nome.label }}
+                {{ form.nome(class="form-input") }}
+
+                {% for error in form.nome.errors %}
+                    <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="form-actions">
+                {{ form.btnSubmit(class="btn-submit") }}
+
+                <a href="{{ url_for('financeiro.listar_categorias_view') }}" class="btn-cancel">
+                    Voltar para categorias
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Categorias
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financeiro/financeiro.css') }}">
+{% endblock %}
+
+{% block content %}
+    <header class="page-header">
+        <div>
+            <h1>Categorias</h1>
+            <p>Crie e gerencie as categorias para lançamentos financeiros.</p>
+        </div>
+
+        <a class="btn" href="{{ url_for('financeiro.nova_categoria') }}">
+            Nova categoria
+        </a>
+    </header>
+
+    {% if categorias %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Lançamentos vinculados</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for categoria in categorias %}
+                        <tr>
+                            <td>{{ categoria.nome | padronizar_titulo}}</td>
+
+                            <td>
+                                {{ categoria.lancamentos|length }}
+                            </td>
+
+                            <td> <!-- AÇÕES -->
+                                <div class="table-actions">
+                                    <a class="action-edit" href="{{ url_for('financeiro.editar_categoria', id=categoria.id) }}">
+                                        Editar
+                                    </a>
+
+                                    <form method="POST" action="{{ url_for('financeiro.deletar_categoria_view', id=categoria.id) }}">
+                                        <button class="action-delete" type="submit">
+                                            Deletar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Nenhuma categoria cadastrada.</p>
+    {% endif %}
+{% endblock %}

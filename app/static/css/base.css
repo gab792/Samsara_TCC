@@ -1,0 +1,168 @@
+/* =========================
+   BASE / RESET
+========================= */
+
+:root {
+    --primary: #d54e00;
+    --primary-hover: #ff8e0d;
+
+    --bg: #f4f6f9;
+    --text: #111827;
+    --muted: #6b7280;
+
+    --sidebar-width: 240px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+/* =========================
+   LAYOUT PRINCIPAL
+========================= */
+
+.main-content {
+    min-height: 100vh;
+    padding: 32px;
+}
+
+.has-sidebar .main-content {
+    margin-left: var(--sidebar-width);
+    padding: 32px 40px;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    padding: 24px 20px;
+    background-color: var(--primary);
+    color: white;
+}
+
+.sidebar-logo h2,
+.sidebar h2 {
+    margin-bottom: 32px;
+    font-size: 1.5rem;
+}
+
+.sidebar-nav,
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-nav a,
+.sidebar nav a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-nav a:hover,
+.sidebar nav a:hover {
+    background-color: var(--primary-hover);
+}
+
+/* =========================
+   FLASH MESSAGES
+========================= */
+
+.flash {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* =========================
+   ELEMENTOS BÁSICOS
+========================= */
+
+h1 {
+    margin-bottom: 24px;
+    font-size: 2rem;
+}
+
+a {
+    color: inherit;
+}
+
+/* =========================
+   RESPONSIVO SIMPLES
+========================= */
+
+@media (max-width: 900px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+
+    .has-sidebar .main-content {
+        margin-left: 0;
+        padding: 24px;
+    }
+
+    .sidebar-logo h2,
+    .sidebar h2 {
+        margin-bottom: 16px;
+    }
+
+    .sidebar-nav,
+    .sidebar nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-content,
+    .has-sidebar .main-content {
+        padding: 20px 16px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}

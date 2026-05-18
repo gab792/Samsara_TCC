@@ -1,19 +1,32 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from dotenv import load_dotenv
-from flask_bcrypt import Bcrypt
-import os
-load_dotenv('.env')
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #evitar que toda vez que houver uma modificação ficar checando 
+from app.config import Config
+from app.extensions import db, migrate, login_manager, bcrypt
 
-BancoDeDados = SQLAlchemy(app)
-migrate = Migrate(app, BancoDeDados)
-bcrypt = Bcrypt(app)
 
-from app.routes import homepage
-from app.models import LancamentoFinanceiro
+def create_app():
+    app = Flask(__name__)
+
+    app.config.from_object(Config)
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+    bcrypt.init_app(app)
+
+    login_manager.login_view = "auth.login"
+    login_manager.login_message = ("Faça login para acessar esta página.")
+    login_manager.login_message_category = "warning"
+
+    from app.utils.formatters import registrar_filtros
+    registrar_filtros(app)
+
+    from app.auth import auth_bp
+    from app.main import main_bp
+    from app.financeiro import financeiro_bp
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(financeiro_bp)
+
+    return app
