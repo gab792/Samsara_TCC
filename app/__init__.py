@@ -1,8 +1,8 @@
 from flask import Flask
 
 from app.config import Config
-from app.extensions import db, migrate, login_manager, bcrypt
-
+from app.extensions import db, migrate, login_manager, bcrypt, mail
+from app.financeiro.agendador import iniciar_agendador
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +13,7 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    mail.init_app(app)
 
     login_manager.login_view = "auth.login"
     login_manager.login_message = ("Faça login para acessar esta página.")
@@ -28,5 +29,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(financeiro_bp)
+
+    iniciar_agendador()
 
     return app
