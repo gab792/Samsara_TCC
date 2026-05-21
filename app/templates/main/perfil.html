@@ -4,9 +4,47 @@
 Perfil
 {% endblock %}
 
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/perfil.css') }}">
+{% endblock %}
+
 {% block content %}
     <h1>Perfil</h1>
 
-    <p>Usuário: {{ current_user.username }}</p>
-    <p>Email: {{ current_user.email }}</p>
+    <div class="container">
+
+    <!-- Barra superior -->
+    <div class="topo">
+      Dados do usuário
+    </div>
+
+    <!-- Caixa -->
+    <div class="card">
+
+      <div class="campo">
+        <label>Usuário</label>
+        <input type="text" value="Gabrielle Palma">
+      </div>
+
+      <div class="campo">
+        <label>E-mail</label>
+        <input type="email" value="gabrielle@gmail.com">
+      </div>
+
+      <div class="campo">
+        <label>Telefone</label>
+        <input type="text" value="(11) 99999-9999">
+      </div>
+
+      <!-- Botões -->
+      <div class="botoes">
+        <button class="btn editar">Editar</button>
+        <button class="btn atualizar">Atualizar</button>
+        <button class="btn excluir">Excluir Conta</button>
+      </div>
+
+    </div>
+
+  </div>
+
 {% endblock %}
