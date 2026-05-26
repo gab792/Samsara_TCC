@@ -1,4 +1,8 @@
 .agenda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
     margin-bottom: 24px;
 }
 
@@ -10,8 +14,23 @@
     color: #6b7280;
 }
 
-/* Cards superiores */
+.btn-alert-email {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #d54e00;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
 
+.btn-alert-email:hover {
+    background: #ff8e0d;
+}
+
+
+/* Cards superiores */
 .agenda-summary {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -55,8 +74,8 @@
     border-left-color: #22c55e;
 }
 
-/* Seções */
 
+/* Seções */
 .agenda-section {
     margin-bottom: 28px;
 }
@@ -78,8 +97,8 @@
     color: #6b7280;
 }
 
-/* Lista */
 
+/* Lista */
 .agenda-list {
     display: flex;
     flex-direction: column;
@@ -155,12 +174,25 @@
     background: #ff8e0d;
 }
 
-/* Estado vazio */
 
+/* Estado vazio */
 .agenda-empty {
     padding: 14px 16px;
     background: white;
     border: 1px dashed #d1d5db;
     border-radius: 10px;
     color: #6b7280;
+}
+
+
+@media (max-width: 700px) {
+    .agenda-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .agenda-header form,
+    .btn-alert-email {
+        width: 100%;
+    }
 }

@@ -10,8 +10,19 @@
 
 {% block content %}
     <div class="agenda-header">
-        <h1>Agenda Financeira</h1>
-        <p>Controle vencimentos, pagamentos e contas pendentes.</p>
+        <div>
+            <h1>Agenda Financeira</h1>
+            <p>Controle vencimentos, pagamentos e contas pendentes.</p>
+        </div>
+
+        <form 
+            method="POST"
+            action="{{ url_for('financeiro.enviar_alertas_vencimento_view') }}"
+            onsubmit="return confirm('Deseja enviar agora os alertas de contas que vencem amanhã?');">
+            <button type="submit" class="btn-alert-email">
+                Enviar alertas por email
+            </button>
+        </form>
     </div>
 
     <section class="agenda-summary">
