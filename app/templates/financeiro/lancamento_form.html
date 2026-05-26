@@ -22,7 +22,14 @@
             <div class="form-grid">
                 <div class="form-group">
                     {{ form.categoria.label }}
-                    {{ form.categoria(class="form-input")}}
+
+                    <div class="category-row">
+                        {{ form.categoria(class="form-input", id="categoria") }}
+
+                        <button type="button" class="btn-add-category" id="open-category-modal">
+                            +
+                        </button>
+                    </div>
 
                     {% for error in form.categoria.errors %}
                         <p class="field-error">{{ error }}</p>
@@ -130,4 +137,129 @@
             </div>
         </form>
     </div>
+
+
+    <div class="category-modal" id="category-modal">
+        <div class="category-modal-content">
+            <div class="category-modal-header">
+                <h3>Nova categoria</h3>
+
+                <button type="button" class="category-modal-close" id="close-category-modal">
+                    &times;
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label for="category-name">Nome da categoria</label>
+                <input
+                    type="text"
+                    id="category-name"
+                    class="form-input"
+                    placeholder="Ex: Mercadorias, Energia..."
+                >
+            </div>
+
+            <p class="field-error" id="category-error"></p>
+
+            <div class="category-modal-actions">
+                <button type="button" class="btn-submit" id="save-category">
+                    Salvar categoria
+                </button>
+
+                <button type="button" class="btn-cancel" id="cancel-category">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const categoryModal = document.getElementById("category-modal");
+        const openCategoryModal = document.getElementById("open-category-modal");
+        const closeCategoryModal = document.getElementById("close-category-modal");
+        const cancelCategory = document.getElementById("cancel-category");
+        const saveCategory = document.getElementById("save-category");
+        const categoryNameInput = document.getElementById("category-name");
+        const categoryError = document.getElementById("category-error");
+        const categorySelect = document.getElementById("categoria");
+
+        function openModal() {
+            categoryModal.classList.add("active");
+            categoryNameInput.value = "";
+            categoryError.textContent = "";
+            categoryNameInput.focus();
+        }
+
+        function closeModal() {
+            categoryModal.classList.remove("active");
+        }
+
+        openCategoryModal.addEventListener("click", openModal);
+        closeCategoryModal.addEventListener("click", closeModal);
+        cancelCategory.addEventListener("click", closeModal);
+
+        categoryNameInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                saveCategory.click();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && categoryModal.classList.contains("active")) {
+                closeModal();
+            }
+        });
+
+        categoryModal.addEventListener("click", function (event) {
+            if (event.target === categoryModal) {
+                closeModal();
+            }
+        });
+
+        saveCategory.addEventListener("click", async function () {
+            const nome = categoryNameInput.value.trim();
+
+            if (!nome) {
+                categoryError.textContent = "Informe o nome da categoria.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("nome", nome);
+
+            const csrfInput = document.querySelector("input[name='csrf_token']");
+
+            if (csrfInput) {
+                formData.append("csrf_token", csrfInput.value);
+            }
+
+            try {
+                const response = await fetch("{{ url_for('financeiro.criar_categoria_ajax') }}", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.ok) {
+                    categoryError.textContent = data.erro || "Erro ao criar categoria.";
+                    return;
+                }
+
+                const option = document.createElement("option");
+                option.value = data.id;
+                option.textContent = data.nome;
+
+                categorySelect.appendChild(option);
+                categorySelect.value = data.id;
+
+                closeModal();
+
+            } catch (error) {
+                categoryError.textContent = "Erro inesperado ao criar categoria.";
+            }
+        });
+    </script>
 {% endblock %}

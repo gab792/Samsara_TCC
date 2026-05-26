@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 
 from app.financeiro import financeiro_bp
@@ -10,7 +10,7 @@ from app.financeiro.services import (
     criar_lancamento, obter_resumo_dashboard, listar_lancamentos_filtrados, atualizar_lancamento, marcar_lancamento_como_pago, deletar_lancamento,
     obter_agenda_financeira,
     obter_relatorio_mensal,
-    criar_categoria, listar_categorias, atualizar_categoria, deletar_categoria
+    criar_categoria, criar_categoria_por_nome, listar_categorias, atualizar_categoria, deletar_categoria
 )
 
 
@@ -21,6 +21,8 @@ def carregar_categorias_no_form(form):
     )
 
     form.categoria.choices = [
+        (0, "-- Selecione uma categoria --")
+    ] + [
         (categoria.id, padronizar_titulo(categoria.nome))
         for categoria in categorias
     ]
@@ -164,6 +166,31 @@ def deletar_categoria_view(id):
     return redirect(
         url_for("financeiro.listar_categorias_view")
     )
+
+
+@financeiro_bp.route("/categorias/criar-ajax/", methods=["POST"])
+@login_required
+def criar_categoria_ajax():
+    nome = request.form.get("nome", "")
+
+    try:
+        categoria = criar_categoria_por_nome(
+            nome=nome,
+            user_id=current_user.id,
+        )
+
+        return jsonify({
+            "ok": True,
+            "id": categoria.id,
+            "nome": padronizar_titulo(categoria.nome),
+            "mensagem": "Categoria criada com sucesso.",
+        })
+
+    except ValueError as erro:
+        return jsonify({
+            "ok": False,
+            "erro": str(erro),
+        }), 400
 
 
 # LANÇAMENTOS

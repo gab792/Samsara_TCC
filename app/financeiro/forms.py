@@ -9,7 +9,9 @@ class LancamentoForm(FlaskForm):
     categoria = SelectField(
         "Categoria",
         coerce=int,
-        validators=[Optional()],
+        validators=[
+            NumberRange(min=1, message="Selecione uma categoria.")
+        ],
     )
 
     favorecido = StringField(

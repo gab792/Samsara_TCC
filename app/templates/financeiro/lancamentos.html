@@ -79,7 +79,7 @@
                         value="{{ categoria.id }}"
                         {% if categoria_selecionada == categoria.id|string %}selected{% endif %}
                     >
-                        {{ categoria.nome }}
+                        {{ categoria.nome | padronizar_titulo }}
                     </option>
                 {% endfor %}
             </select>
@@ -123,7 +123,7 @@
                             </td>
 
                             <td>
-                                {{ lancamento.favorecido or "-" }}
+                                {{ lancamento.favorecido | padronizar_titulo or "-" }}
                             </td>
                         <!-- Caso o nosso cliente ainda queira essas infos na tabela
                             <td>
@@ -174,7 +174,9 @@
                                         </form>
                                     {% endif %}
 
-                                    <form method="POST" action="{{ url_for('financeiro.deletar_lancamento_view', id=lancamento.id) }}">
+                                    <form method="POST"
+                                    action="{{ url_for('financeiro.deletar_lancamento_view', id=lancamento.id) }}"
+                                    onsubmit="return confirm('Deseja realmente excluir este lançamento?\nEssa ação não poderá ser desfeita.');">
                                         <button class="action-delete" type="submit">
                                             Deletar
                                         </button>

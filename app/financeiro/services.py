@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 from calendar import monthrange
+from sqlalchemy import func
 
 from app.extensions import db
 from app.models import LancamentoFinanceiro, CategoriaFinanceira
@@ -387,8 +388,11 @@ def deletar_lancamento(lancamento):
 
 
 # CATEGORIAS
-def criar_categoria(form, user_id):
-    nome_normalizado = form.nome.data.strip().lower()
+def criar_categoria_por_nome(nome, user_id):
+    nome_normalizado = nome.strip().lower()
+
+    if not nome_normalizado:
+        raise ValueError("Informe o nome da categoria.")
 
     categoria_existente = CategoriaFinanceira.query.filter_by(
         nome=nome_normalizado,
@@ -407,6 +411,13 @@ def criar_categoria(form, user_id):
     db.session.commit()
 
     return categoria
+
+
+def criar_categoria(form, user_id):
+    return criar_categoria_por_nome(
+        nome=form.nome.data,
+        user_id=user_id,
+    )
 
 
 def listar_categorias(user_id):

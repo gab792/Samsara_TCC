@@ -100,6 +100,97 @@ textarea.form-input {
     background-color: #d1d5db;
 }
 
+
+/* modal */
+.category-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.category-row .form-input {
+    flex: 1;
+}
+
+.btn-add-category {
+    width: 38px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: #d54e00;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.btn-add-category:hover {
+    background-color: #ff8e0d;
+}
+
+.category-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.category-modal.active {
+    display: flex;
+}
+
+.category-modal-content {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+
+.category-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.category-modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.category-modal-close {
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    color: #555;
+}
+
+.category-modal-close:hover {
+    color: #111;
+}
+
+.category-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.category-modal-actions .btn-cancel {
+    border: none;
+    cursor: pointer;
+}
+
 @media (max-width: 900px) {
     .form-grid {
         grid-template-columns: 1fr;
@@ -115,6 +206,17 @@ textarea.form-input {
 
     .btn-submit,
     .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
+
+
+    .category-modal-actions {
+        flex-direction: column;
+    }
+
+    .category-modal-actions .btn-submit,
+    .category-modal-actions .btn-cancel {
         width: 100%;
         text-align: center;
     }
