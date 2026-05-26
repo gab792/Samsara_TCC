@@ -229,13 +229,13 @@ def listar_lancamentos_filtrados(user_id, status=None, mes=None, ano=None, categ
 
     lancamentos = (query.order_by(LancamentoFinanceiro.data_lancamento.desc()).all())
 
-    total_filtrado = (
+    total_somatorio = (
         sum(lancamento.valor for lancamento in lancamentos)
         if lancamentos
         else 0
     )
 
-    return lancamentos, total_filtrado
+    return lancamentos, total_somatorio
 
 
 # LANÇAMENTOS

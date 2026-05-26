@@ -96,7 +96,9 @@
 
     {% if lancamentos %} <!-- Tabela de Lançamentos -->
         <div class="table-container">
+            
             <table class="data-table">
+                
                 <thead>
                     <tr>
                         <th>Categoria</th>
@@ -189,8 +191,13 @@
             </table>
         </div>
         <div class="table-summary">
-            <span>Total filtrado</span>
-            <strong>{{ total_filtrado | moeda }}</strong>
+            {% if tem_filtro %}
+                <span>Total Filtrado:</span>
+                <strong>{{ total_somatorio | moeda }}</strong>
+            {% else %}
+                <span>Total:</span>
+                <strong>{{ total_somatorio | moeda }}</strong>
+            {% endif %}
         </div>
     {% else %}
         <p class="empty-state">Nenhum lançamento cadastrado.</p>

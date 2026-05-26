@@ -204,7 +204,7 @@ def listar_lancamentos():
 
     categorias = listar_categorias(user_id=current_user.id)
 
-    lancamentos, total_filtrado = listar_lancamentos_filtrados(
+    lancamentos, total_somatorio = listar_lancamentos_filtrados(
         user_id=current_user.id,
         status=status,
         mes=mes,
@@ -212,14 +212,17 @@ def listar_lancamentos():
         categoria_id=categoria_id,
     )
 
+    tem_filtro = bool(status or ano or (categoria_id and categoria_id != "0"))
+
     return render_template(
         "financeiro/lancamentos.html",
         lancamentos=lancamentos,
-        total_filtrado=total_filtrado,
+        total_somatorio=total_somatorio,
         status_selecionado=status,
         mes_selecionado=mes,
         ano_selecionado=ano,
         categorias=categorias,
+        tem_filtro=tem_filtro,
     )
 
 @financeiro_bp.route("/lancamentos/novo/", methods=["GET", "POST"])
