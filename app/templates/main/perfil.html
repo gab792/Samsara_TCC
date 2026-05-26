@@ -23,18 +23,20 @@ Perfil
 
       <div class="campo">
         <label>Usuário</label>
-        <input type="text" value="Gabrielle Palma">
+        <input type="text" value= "{{ current_user.username | padronizar_titulo }}">
       </div>
 
       <div class="campo">
         <label>E-mail</label>
-        <input type="email" value="gabrielle@gmail.com">
+        <input type="email" value="{{ current_user.email }}">
       </div>
 
+      <!--
       <div class="campo">
         <label>Telefone</label>
-        <input type="text" value="(11) 99999-9999">
+        <input type="text" value=" - ">
       </div>
+      -->
 
       <!-- Botões -->
       <div class="botoes">
