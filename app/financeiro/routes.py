@@ -13,6 +13,7 @@ from app.financeiro.services import (
     criar_categoria, criar_categoria_por_nome, listar_categorias, atualizar_categoria, deletar_categoria
 )
 
+from app.financeiro.notificacoes import enviar_alertas_vencimento
 
 
 def carregar_categorias_no_form(form):
@@ -50,6 +51,33 @@ def agenda():
     return render_template(
         "financeiro/agenda.html",
         **dados_agenda,
+    )
+
+
+# BOTÃO DE ENVIAR AVISO (P/ A APRESENTAÇÃO SÓ)
+@financeiro_bp.route("/agenda/enviar-alertas/", methods=["POST"])
+@login_required
+def enviar_alertas_vencimento_view():
+    resultado = enviar_alertas_vencimento(
+        user_id=current_user.id
+    )
+
+    emails_enviados = resultado["emails_enviados"]
+    lancamentos_encontrados = resultado["lancamentos_encontrados"]
+
+    if emails_enviados > 0:
+        flash(
+            f"Alerta enviado com sucesso: {lancamentos_encontrados} conta(s) vencem amanhã.",
+            "success",
+        )
+    else:
+        flash(
+            "Nenhuma conta com vencimento para amanhã foi encontrada.",
+            "info",
+        )
+
+    return redirect(
+        url_for("financeiro.agenda")
     )
 
 
