@@ -30,9 +30,13 @@
 
     </section>
 
-    {% if qtd_vencidas > 0 %} <!-- aviso se houver contas vencidas -->
-        <div class="flash warning">
-            Você tem {{ qtd_vencidas }} conta(s) vencida(s).
+    {% if qtd_vencidas > 0 %} <!-- caso tenha contas vencidas -->
+        <div class="dashboard-alert">
+            <div>
+                <strong>Contas vencidas!</strong>
+                <p>Você tem {{ qtd_vencidas }} conta(s) vencida(s) aguardando atenção.</p>
+            </div>
+
             <a href="{{ url_for('financeiro.agenda') }}">
                 Ver agenda
             </a>

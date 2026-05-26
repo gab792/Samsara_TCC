@@ -4,6 +4,7 @@
     color: #111827;
 }
 
+
 /* CARDS RESUMO */
 .cards {
     display: grid;
@@ -33,6 +34,7 @@
     color: #111827;
 }
 
+
 /* Card 1: total pago */
 .card:nth-child(1) {
     border-left: 5px solid #22c55e;
@@ -47,6 +49,7 @@
 .card:nth-child(3) {
     border-left: 5px solid #ef4444;
 }
+
 
 /* GRID PRINCIPAL */
 .dashboard-grid {
@@ -72,6 +75,49 @@
     color: #111827;
 }
 
+
+/* alerta conta vencida */
+.dashboard-alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    background: #fffbeb;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-alert strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #92400e;
+    font-size: 0.95rem;
+}
+
+.dashboard-alert p {
+    margin: 0;
+    color: #78350f;
+    font-size: 0.9rem;
+}
+
+.dashboard-alert a {
+    white-space: nowrap;
+    background: #d97706;
+    color: white;
+    padding: 9px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.dashboard-alert a:hover {
+    background: #b45309;
+}
+
+
 /* GRÁFICO */
 .chart-area {
     min-height: 360px;
@@ -81,6 +127,7 @@
     width: 100%;
     max-height: 260px;
 }
+
 
 /* TABELA DE ÚLTIMOS LANÇAMENTOS */
 .table-container {
@@ -128,6 +175,7 @@
     color: #6b7280;
 }
 
+
 /* MINI CARDS */
 .extra-cards {
     display: grid;
@@ -155,4 +203,3 @@
     font-weight: 700;
     color: #111827;
 }
-
