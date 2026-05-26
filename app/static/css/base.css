@@ -83,6 +83,25 @@ body {
     background-color: var(--primary-hover);
 }
 
+.logo-titulo{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-titulo img{
+    width: 50px;
+    height: 50px;
+}
+
+.logo-titulo h2{
+    margin: 0;
+}
+
+.menu-link i{
+    margin-right: 8px;
+}
+
 /* =========================
    FLASH MESSAGES
 ========================= */

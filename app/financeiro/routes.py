@@ -1,5 +1,9 @@
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+
+import csv
+from io import StringIO
+from flask import Response
 
 from app.financeiro import financeiro_bp
 from app.models import LancamentoFinanceiro, CategoriaFinanceira
@@ -10,10 +14,9 @@ from app.financeiro.services import (
     criar_lancamento, obter_resumo_dashboard, listar_lancamentos_filtrados, atualizar_lancamento, marcar_lancamento_como_pago, deletar_lancamento,
     obter_agenda_financeira,
     obter_relatorio_mensal,
-    criar_categoria, criar_categoria_por_nome, listar_categorias, atualizar_categoria, deletar_categoria
+    criar_categoria, listar_categorias, atualizar_categoria, deletar_categoria
 )
 
-from app.financeiro.notificacoes import enviar_alertas_vencimento
 
 
 def carregar_categorias_no_form(form):
@@ -22,8 +25,6 @@ def carregar_categorias_no_form(form):
     )
 
     form.categoria.choices = [
-        (0, "-- Selecione uma categoria --")
-    ] + [
         (categoria.id, padronizar_titulo(categoria.nome))
         for categoria in categorias
     ]
@@ -51,33 +52,6 @@ def agenda():
     return render_template(
         "financeiro/agenda.html",
         **dados_agenda,
-    )
-
-
-# BOTÃO DE ENVIAR AVISO (P/ A APRESENTAÇÃO SÓ)
-@financeiro_bp.route("/agenda/enviar-alertas/", methods=["POST"])
-@login_required
-def enviar_alertas_vencimento_view():
-    resultado = enviar_alertas_vencimento(
-        user_id=current_user.id
-    )
-
-    emails_enviados = resultado["emails_enviados"]
-    lancamentos_encontrados = resultado["lancamentos_encontrados"]
-
-    if emails_enviados > 0:
-        flash(
-            f"Alerta enviado com sucesso: {lancamentos_encontrados} conta(s) vencem amanhã.",
-            "success",
-        )
-    else:
-        flash(
-            "Nenhuma conta com vencimento para amanhã foi encontrada.",
-            "info",
-        )
-
-    return redirect(
-        url_for("financeiro.agenda")
     )
 
 
@@ -196,31 +170,6 @@ def deletar_categoria_view(id):
     )
 
 
-@financeiro_bp.route("/categorias/criar-ajax/", methods=["POST"])
-@login_required
-def criar_categoria_ajax():
-    nome = request.form.get("nome", "")
-
-    try:
-        categoria = criar_categoria_por_nome(
-            nome=nome,
-            user_id=current_user.id,
-        )
-
-        return jsonify({
-            "ok": True,
-            "id": categoria.id,
-            "nome": padronizar_titulo(categoria.nome),
-            "mensagem": "Categoria criada com sucesso.",
-        })
-
-    except ValueError as erro:
-        return jsonify({
-            "ok": False,
-            "erro": str(erro),
-        }), 400
-
-
 # LANÇAMENTOS
 @financeiro_bp.route("/lancamentos/")
 @login_required
@@ -232,7 +181,7 @@ def listar_lancamentos():
 
     categorias = listar_categorias(user_id=current_user.id)
 
-    lancamentos, total_somatorio = listar_lancamentos_filtrados(
+    lancamentos, total_filtrado = listar_lancamentos_filtrados(
         user_id=current_user.id,
         status=status,
         mes=mes,
@@ -240,17 +189,14 @@ def listar_lancamentos():
         categoria_id=categoria_id,
     )
 
-    tem_filtro = bool(status or ano or (categoria_id and categoria_id != "0"))
-
     return render_template(
         "financeiro/lancamentos.html",
         lancamentos=lancamentos,
-        total_somatorio=total_somatorio,
+        total_filtrado=total_filtrado,
         status_selecionado=status,
         mes_selecionado=mes,
         ano_selecionado=ano,
         categorias=categorias,
-        tem_filtro=tem_filtro,
     )
 
 @financeiro_bp.route("/lancamentos/novo/", methods=["GET", "POST"])
@@ -357,3 +303,64 @@ def deletar_lancamento_view(id):
     return redirect(
         url_for("financeiro.listar_lancamentos")
     )
+
+@financeiro_bp.route('/exportar-relatorio')
+@login_required
+def exportar_relatorio():
+
+    output = StringIO()
+    writer = csv.writer(output, delimiter=';')
+
+    # Cabeçalho
+    writer.writerow([
+        "Categoria",
+        "Fornecedor",
+        "Despesa",
+        "Origem",
+        "Pagamento",
+        "Status",
+        "Valor",
+        "Data",
+    ])
+
+    transacoes = LancamentoFinanceiro.query.filter_by(
+        user_id=current_user.id
+    ).all()
+
+    # Dados do banco
+    for transacao in transacoes:
+        writer.writerow([
+            transacao.categoria.nome,
+            transacao.favorecido,
+            transacao.tipo_custo,
+            transacao.conta_origem,
+            transacao.forma_pagamento,
+            transacao.status,
+            transacao.valor,
+            transacao.data_lancamento,
+        ])
+
+    response = Response(
+        output.getvalue(),
+        mimetype='text/csv'
+    )
+
+    response.headers[
+        "Content-Disposition"
+    ] = "attachment; filename=relatorio.csv"
+
+    return response
+
+@financeiro_bp.route('/atualizar-perfil', methods=['POST'])
+@login_required
+def atualizar_perfil():
+
+    current_user.username = request.form.get('username')
+    current_user.email = request.form.get('email')
+    current_user.telefone = request.form.get('telefone')
+
+    db.session.commit()
+
+    flash('Perfil atualizado com sucesso!', 'success')
+
+    return redirect(url_for('perfil.perfil'))

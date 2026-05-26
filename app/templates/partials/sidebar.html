@@ -1,38 +1,54 @@
 <aside class="sidebar">
-    <div class="sidebar-logo">
-        <h2>Samsara</h2>
-    </div>
+<div class="logo-titulo">
+    <img src="{{ url_for('static', filename='lotus/lotus.png') }}"
+         alt="Logo da empresa">
+
+    <h2>Samsara</h2>
+</div>
 
     <nav class="sidebar-nav">
-        <a href="{{ url_for('financeiro.dashboard') }}">
+        <a href="{{ url_for('financeiro.dashboard') }}"  class="menu-link">
+            <i class="fa-solid fa-house"></i>
             Dashboard
         </a>
 
-        <a href="{{ url_for('financeiro.listar_lancamentos') }}">
+        <a href="{{ url_for('financeiro.listar_lancamentos') }}" class="menu-link">
+            <i class="fa-regular fa-chart-bar"></i>
             Lançamentos
         </a>
 
-        <a href="{{ url_for('financeiro.novo_lancamento') }}">
-            Novo Lançamento
+        <a href="{{ url_for('financeiro.novo_lancamento') }}" class="menu-link">
+            <i class="fa-regular fa-pen-to-square"></i>
+            Novo lançamento
         </a>
 
-        <a href="{{ url_for('financeiro.listar_categorias_view') }}">
+        <a href="{{ url_for('financeiro.listar_categorias_view') }}" class="menu-link">
+            <i class="fa-regular fa-rectangle-list"></i>
             Categorias
         </a>
 
-        <a href="{{ url_for('financeiro.agenda') }}">
+        <a href="{{ url_for('financeiro.nova_categoria') }}" class="menu-link">
+            <i class="fa-regular fa-circle-check"></i>
+            Nova Categoria
+        </a>
+        
+        <a href="{{ url_for('financeiro.agenda') }}" class="menu-link">
+           <i class="fa-regular fa-calendar"></i>
             Agenda
         </a>
 
-        <a href="{{ url_for('financeiro.relatorio_mensal') }}">
-            Relatório
+        <a href="{{ url_for('financeiro.relatorio_mensal') }}" class="menu-link">
+            <i class="fa-regular fa-file-lines"></i>
+            Relatórios
         </a>
 
-        <a href="{{ url_for('main.perfil') }}">
-            Perfil
+        <a href="{{ url_for('main.perfil') }}" class="menu-link">
+            <i class="fa-regular fa-user"></i>
+                Perfil
         </a>
         
-        <a href="{{ url_for('auth.logout') }}">
+        <a href="{{ url_for('auth.logout') }}" class="menu-link">
+            <i class="fa-regular fa-share-from-square"></i>
             Sair
         </a>
     </nav>
