@@ -1,11 +1,9 @@
-from flask import render_template, redirect, url_for, flash, request, Response
-from flask_login import login_required, current_user, logout_user
-
-import csv
+from flask import render_template, redirect, url_for, flash, request, Response, jsonify
+from flask_login import login_required, current_user
 from io import StringIO
+import csv
 
-from app import db
-
+from app.financeiro.notificacoes import enviar_alertas_vencimento
 from app.financeiro import financeiro_bp
 from app.models import LancamentoFinanceiro, CategoriaFinanceira
 from app.financeiro.forms import LancamentoForm, CategoriaForm
@@ -15,7 +13,7 @@ from app.financeiro.services import (
     criar_lancamento, obter_resumo_dashboard, listar_lancamentos_filtrados, atualizar_lancamento, marcar_lancamento_como_pago, deletar_lancamento,
     obter_agenda_financeira,
     obter_relatorio_mensal,
-    criar_categoria, listar_categorias, atualizar_categoria, deletar_categoria
+    criar_categoria, criar_categoria_por_nome, listar_categorias, atualizar_categoria, deletar_categoria
 )
 
 
@@ -26,6 +24,8 @@ def carregar_categorias_no_form(form):
     )
 
     form.categoria.choices = [
+        (0, "-- Selecione uma categoria --")
+    ] + [
         (categoria.id, padronizar_titulo(categoria.nome))
         for categoria in categorias
     ]
@@ -56,22 +56,30 @@ def agenda():
     )
 
 
-# RELATÓRIO
-@financeiro_bp.route("/relatorio-mensal/")
+# ENVIAR AVISO EMAIl (P/ A APRESENTAÇÃO SÓ)
+@financeiro_bp.route("/agenda/enviar-alertas/", methods=["POST"])
 @login_required
-def relatorio_mensal():
-    mes = request.args.get("mes")
-    ano = request.args.get("ano")
-
-    dados_relatorio = obter_relatorio_mensal(
-        user_id=current_user.id,
-        mes=mes,
-        ano=ano,
+def enviar_alertas_vencimento_view():
+    resultado = enviar_alertas_vencimento(
+        user_id=current_user.id
     )
 
-    return render_template(
-        "financeiro/relatorio_mensal.html",
-        **dados_relatorio,
+    emails_enviados = resultado["emails_enviados"]
+    lancamentos_encontrados = resultado["lancamentos_encontrados"]
+
+    if emails_enviados > 0:
+        flash(
+            f"Alerta enviado com sucesso: {lancamentos_encontrados} conta(s) vencem amanhã.",
+            "success",
+        )
+    else:
+        flash(
+            "Nenhuma conta com vencimento para amanhã foi encontrada.",
+            "info",
+        )
+
+    return redirect(
+        url_for("financeiro.agenda")
     )
 
 
@@ -87,7 +95,6 @@ def listar_categorias_view():
         "financeiro/categorias.html",
         categorias=categorias,
     )
-
 
 @financeiro_bp.route("/categorias/nova/", methods=["GET", "POST"])
 @login_required
@@ -105,7 +112,6 @@ def nova_categoria():
             form.nome.errors.append(str(erro))
 
     return render_template("financeiro/categoria_form.html", form=form, titulo="Nova categoria",)
-
 
 @financeiro_bp.route("/categorias/<int:id>/editar/", methods=["GET", "POST"])
 @login_required
@@ -139,7 +145,6 @@ def editar_categoria(id):
         titulo="Editar categoria",
     )
 
-
 @financeiro_bp.route("/categorias/<int:id>/deletar/", methods=["POST"])
 @login_required
 def deletar_categoria_view(id):
@@ -170,6 +175,31 @@ def deletar_categoria_view(id):
         url_for("financeiro.listar_categorias_view")
     )
 
+# modal
+@financeiro_bp.route("/categorias/criar-ajax/", methods=["POST"])
+@login_required
+def criar_categoria_ajax():
+    nome = request.form.get("nome", "")
+
+    try:
+        categoria = criar_categoria_por_nome(
+            nome=nome,
+            user_id=current_user.id,
+        )
+
+        return jsonify({
+            "ok": True,
+            "id": categoria.id,
+            "nome": padronizar_titulo(categoria.nome),
+            "mensagem": "Categoria criada com sucesso.",
+        })
+
+    except ValueError as erro:
+        return jsonify({
+            "ok": False,
+            "erro": str(erro),
+        }), 400
+
 
 # LANÇAMENTOS
 @financeiro_bp.route("/lancamentos/")
@@ -182,7 +212,7 @@ def listar_lancamentos():
 
     categorias = listar_categorias(user_id=current_user.id)
 
-    lancamentos, total_filtrado = listar_lancamentos_filtrados(
+    lancamentos, total_somatorio = listar_lancamentos_filtrados(
         user_id=current_user.id,
         status=status,
         mes=mes,
@@ -190,10 +220,12 @@ def listar_lancamentos():
         categoria_id=categoria_id,
     )
 
+    tem_filtro = bool(status or ano or (categoria_id and categoria_id != "0"))
+
     return render_template(
         "financeiro/lancamentos.html",
         lancamentos=lancamentos,
-        total_filtrado=total_filtrado,
+        total_somatorio=total_somatorio,
         status_selecionado=status,
         mes_selecionado=mes,
         ano_selecionado=ano,
@@ -305,6 +337,24 @@ def deletar_lancamento_view(id):
         url_for("financeiro.listar_lancamentos")
     )
 
+# RELATÓRIO
+@financeiro_bp.route("/relatorio-mensal/")
+@login_required
+def relatorio_mensal():
+    mes = request.args.get("mes")
+    ano = request.args.get("ano")
+
+    dados_relatorio = obter_relatorio_mensal(
+        user_id=current_user.id,
+        mes=mes,
+        ano=ano,
+    )
+
+    return render_template(
+        "financeiro/relatorio_mensal.html",
+        **dados_relatorio,
+    )
+
 @financeiro_bp.route('/exportar-relatorio')
 @login_required
 def exportar_relatorio():
@@ -352,31 +402,3 @@ def exportar_relatorio():
 
     return response
 
-@financeiro_bp.route('/atualizar_perfil', methods=['POST'])
-@login_required
-def atualizar_perfil():
-
-    current_user.username = request.form.get('username')
-    current_user.email = request.form.get('email')
-    current_user.telefone = request.form.get('telefone')
-
-    db.session.commit()
-
-    flash('Perfil atualizado com sucesso!', 'success')
-
-    return redirect(url_for('main.perfil'))
-
-@financeiro_bp.route('/excluir_conta', methods=['POST'])
-@login_required
-def excluir_conta():
-
-    usuario = current_user._get_current_object()
-
-    db.session.delete(usuario)
-    db.session.commit()
-
-    logout_user()
-
-    flash('Conta excluída com sucesso.', 'success')
-
-    return redirect(url_for('auth.login'))

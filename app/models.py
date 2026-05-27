@@ -15,23 +15,7 @@ class User(db.Model, UserMixin):
 
     email = db.Column(db.String(120), unique=True, nullable=False)
 
-    telefone = db.Column(db.String(20))
-
     password = db.Column(db.String(200), nullable=False)
-
-    categorias = db.relationship(
-        "CategoriaFinanceira",
-        backref="usuario",
-        lazy=True,
-        cascade="all, delete-orphan"
-    )
-
-    lancamentos = db.relationship(
-        "LancamentoFinanceiro",
-        backref="usuario",
-        lazy=True,
-        cascade="all, delete-orphan"
-    )
 
 
 # FINANCEIRO

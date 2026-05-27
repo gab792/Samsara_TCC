@@ -94,7 +94,7 @@
                     <tbody>
                         {% for categoria, total in total_por_categoria.items() %}
                             <tr>
-                                <td>{{ categoria }}</td>
+                                <td>{{ categoria | padronizar_titulo }}</td>
                                 <td>{{ total | moeda }}</td>
                             </tr>
                         {% endfor %}
@@ -155,7 +155,7 @@
                             <td>
                                 {{ lancamento.categoria.nome | padronizar_titulo }}
                             </td>
-                            <td>{{ lancamento.favorecido or "-" }}</td>
+                            <td>{{ lancamento.favorecido | padronizar_titulo or "-" }}</td>
                             <td>{{ lancamento.valor | moeda }}</td>
                             <td>{{ lancamento.status | status_label }}</td>
                             <td>{{ lancamento.data_lancamento | data_br }}</td>
