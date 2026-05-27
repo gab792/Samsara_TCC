@@ -1,55 +1,75 @@
-  {% extends "base.html" %}
+{% extends "base.html" %}
 
-  {% block title %}
-  Perfil
-  {% endblock %}
+{% block title %}
+Perfil
+{% endblock %}
 
-  {% block style %}
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/perfil.css') }}">
-  {% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/perfil.css') }}">
+{% endblock %}
 
-  {% block content %}
-    <h1>Perfil</h1>
+{% block content %}
+<h1>Perfil</h1>
 
-    <div class="container">
+<div class="container">
 
-            <div class="campo">
-                <label>Usuário</label>
+    <!-- FORM PERFIL -->
+    <form 
+        action="{{ url_for('financeiro.atualizar_perfil') }}"
+        method="POST">
 
-                <input type="text"
+        <div class="campo">
+            <label>Usuário</label>
+
+            <input
+                type="text"
                 name="username"
                 value="{{ current_user.username | padronizar_titulo }}">
-            </div>
+        </div>
 
-            <div class="campo">
-                <label>E-mail</label>
+        <div class="campo">
+            <label>E-mail</label>
 
-                <input type="email"
+            <input
+                type="email"
                 name="email"
                 value="{{ current_user.email }}">
-            </div>
+        </div>
 
-            <div class="campo">
-                <label>Telefone</label>
+        <div class="campo">
+            <label>Telefone</label>
 
-                <input type="text"
+            <input
+                type="text"
                 name="telefone"
-                value="{{ current_user.telefone or '-' }}">
-            </div>
+                value="{{ current_user.telefone or '' }}">
+        </div>
 
-            <div class="botoes">
-                <button type="button" class="btn editar">
-                    Editar
-                </button>
-                <button type="submit" class="btn atualizar">
-                    Atualizar
-                </button>
-                <button 
-                    type="submit"
-                    class="btn-excluir"
-                    onclick="return confirm('Você tem certeza que deseja apagar sua conta? Todos os seus dados serão excluídos permanentemente e não poderão ser recuperados.')">
-                    Excluir Conta
-                </button>
-            </div>
-    </div>
+        <div class="botoes">
+
+            <button type="button" class="btn editar">
+                Editar
+            </button>
+
+            <button type="submit" class="btn atualizar">
+                Atualizar
+            </button>
+
+    </form>
+
+    <!-- FORM EXCLUIR -->
+    <form
+        action="{{ url_for('financeiro.excluir_conta') }}"
+        method="POST"
+        onsubmit="return confirm('Você tem certeza que deseja apagar sua conta?')">
+
+        <button type="submit" class="btn-excluir">
+            Excluir Conta
+        </button>
+
+    </form>
+
+        </div>
+
+</div>
 {% endblock %}

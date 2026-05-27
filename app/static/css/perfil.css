@@ -65,16 +65,10 @@ input:focus{
 }
 
 .botoes{
-  display: flex;
+  display: inline-flex;
   gap: 12px;
   margin-top: 10px;
-  flex-wrap: wrap;
-}
-
-.botoes{
-  display: flex;
-  gap: 12px;
-  margin-top: 10px;
+  align-items: center;
 }
 
 .btn{
@@ -119,10 +113,6 @@ input:focus{
     background: #a4161a;
 }
 
-form{
-  display: inline;
-}
-
 .botoes form{
-  margin: 0;
+  display: inline;
 }

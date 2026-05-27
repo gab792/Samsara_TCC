@@ -15,8 +15,15 @@ class User(db.Model, UserMixin):
 
     email = db.Column(db.String(120), unique=True, nullable=False)
 
+    telefone = db.Column(db.String(20), nullable=True)
+
     password = db.Column(db.String(200), nullable=False)
 
+    lancamentos = db.relationship(
+        "LancamentoFinanceiro",
+        backref="usuario",
+        cascade="all, delete-orphan"
+    )
 
 # FINANCEIRO
 class CategoriaFinanceira(db.Model): # A categoria serve para agrupar e gerar relatório.
@@ -27,7 +34,7 @@ class CategoriaFinanceira(db.Model): # A categoria serve para agrupar e gerar re
 
 class LancamentoFinanceiro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    favorecido = db.Column(db.String(150), nullable=True) # Forncedores
+    favorecido = db.Column(db.String(150), nullable=True)
     valor = db.Column(db.Numeric(10, 2), nullable=False)
     tipo_custo = db.Column(db.String(20), nullable=False, default="variável")
     conta_origem = db.Column(db.String(50), nullable=True)
@@ -38,6 +45,19 @@ class LancamentoFinanceiro(db.Model):
     data_pagamento = db.Column(db.Date, nullable=True)
     observacao = db.Column(db.Text, nullable=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    categoria_id = db.Column(db.Integer, db.ForeignKey("categoria_financeira.id"), nullable=False)
-    categoria = db.relationship("CategoriaFinanceira", backref="lancamentos")
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
+
+    categoria_id = db.Column(
+        db.Integer,
+        db.ForeignKey("categoria_financeira.id"),
+        nullable=False
+    )
+
+    categoria = db.relationship(
+        "CategoriaFinanceira",
+        backref="lancamentos"
+    )

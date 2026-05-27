@@ -1,8 +1,9 @@
 from flask import render_template, redirect, url_for, flash, request, Response, jsonify
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, logout_user
 from io import StringIO
 import csv
 
+from app import db
 from app.financeiro.notificacoes import enviar_alertas_vencimento
 from app.financeiro import financeiro_bp
 from app.models import LancamentoFinanceiro, CategoriaFinanceira
@@ -402,3 +403,32 @@ def exportar_relatorio():
 
     return response
 
+    #PERFIL
+@financeiro_bp.route('/atualizar_perfil', methods=['POST'])
+@login_required
+def atualizar_perfil():
+
+    current_user.username = request.form.get('username')
+    current_user.email = request.form.get('email')
+    current_user.telefone = request.form.get('telefone')
+
+    db.session.commit()
+
+    flash('Perfil atualizado com sucesso!', 'success')
+
+    return redirect(url_for('main.perfil'))
+
+@financeiro_bp.route('/excluir_conta', methods=['POST'])
+@login_required
+def excluir_conta():
+
+    usuario = current_user._get_current_object()
+
+    db.session.delete(usuario)
+    db.session.commit()
+
+    logout_user()
+
+    flash('Conta excluída com sucesso.', 'success')
+
+    return redirect(url_for('auth.login'))
