@@ -1,9 +1,10 @@
-from flask import render_template, redirect, url_for, flash, request
-from flask_login import login_required, current_user
+from flask import render_template, redirect, url_for, flash, request, Response
+from flask_login import login_required, current_user, logout_user
 
 import csv
 from io import StringIO
-from flask import Response
+
+from app import db
 
 from app.financeiro import financeiro_bp
 from app.models import LancamentoFinanceiro, CategoriaFinanceira
@@ -351,7 +352,7 @@ def exportar_relatorio():
 
     return response
 
-@financeiro_bp.route('/atualizar-perfil', methods=['POST'])
+@financeiro_bp.route('/atualizar_perfil', methods=['POST'])
 @login_required
 def atualizar_perfil():
 
@@ -363,4 +364,19 @@ def atualizar_perfil():
 
     flash('Perfil atualizado com sucesso!', 'success')
 
-    return redirect(url_for('perfil.perfil'))
+    return redirect(url_for('main.perfil'))
+
+@financeiro_bp.route('/excluir_conta', methods=['POST'])
+@login_required
+def excluir_conta():
+
+    usuario = current_user._get_current_object()
+
+    db.session.delete(usuario)
+    db.session.commit()
+
+    logout_user()
+
+    flash('Conta excluída com sucesso.', 'success')
+
+    return redirect(url_for('auth.login'))

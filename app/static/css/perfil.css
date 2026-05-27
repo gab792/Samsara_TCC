@@ -71,6 +71,12 @@ input:focus{
   flex-wrap: wrap;
 }
 
+.botoes{
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
 .btn{
   border: none;
   padding: 12px 20px;
@@ -99,11 +105,24 @@ input:focus{
   background: #218838;
 }
 
-.excluir{
-  background: #dc3545;
-  color: white;
+.btn-excluir{
+    background: #d62828;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.excluir:hover{
-  background: #c82333;
+.btn-excluir:hover{
+    background: #a4161a;
+}
+
+form{
+  display: inline;
+}
+
+.botoes form{
+  margin: 0;
 }

@@ -10,11 +10,28 @@ def load_user(user_id):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+
     username = db.Column(db.String(80), unique=True, nullable=False)
+
     email = db.Column(db.String(120), unique=True, nullable=False)
+
+    telefone = db.Column(db.String(20))
+
     password = db.Column(db.String(200), nullable=False)
-    categorias = db.relationship("CategoriaFinanceira", backref="usuario", lazy=True)
-    lancamentos = db.relationship("LancamentoFinanceiro", backref="usuario", lazy=True)
+
+    categorias = db.relationship(
+        "CategoriaFinanceira",
+        backref="usuario",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+
+    lancamentos = db.relationship(
+        "LancamentoFinanceiro",
+        backref="usuario",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
 
 
 # FINANCEIRO
