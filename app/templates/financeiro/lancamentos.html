@@ -169,7 +169,9 @@
                                     </a>
 
                                     {% if lancamento.status == "pendente" %}
-                                        <form method="POST" action="{{ url_for('financeiro.pagar_lancamento', id=lancamento.id) }}">
+                                        <form method="POST"
+                                        action="{{ url_for('financeiro.pagar_lancamento', id=lancamento.id) }}"
+                                        onsubmit="return confirm('Deseja pagar este lançamento?');">
                                             <button class="action-pay" type="submit">
                                                 Pagar
                                             </button>

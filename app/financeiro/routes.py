@@ -1,7 +1,8 @@
-from flask import render_template, redirect, url_for, flash, request, Response, jsonify
+from flask import render_template, redirect, url_for, flash, request, Response, jsonify, current_app
 from flask_login import login_required, current_user, logout_user
 from io import StringIO
 import csv
+import smtplib
 
 from app import db
 from app.financeiro.notificacoes import enviar_alertas_vencimento
@@ -61,9 +62,22 @@ def agenda():
 @financeiro_bp.route("/agenda/enviar-alertas/", methods=["POST"])
 @login_required
 def enviar_alertas_vencimento_view():
-    resultado = enviar_alertas_vencimento(
-        user_id=current_user.id
-    )
+    try:
+        resultado = enviar_alertas_vencimento(
+            user_id=current_user.id
+        )
+
+    except (OSError, smtplib.SMTPException) as erro:
+        current_app.logger.exception("Erro ao enviar alerta de vencimento por email.")
+
+        flash(
+            "Não foi possível enviar o email agora. Verifique a conexão com a internet e tente novamente.",
+            "danger",
+        )
+
+        return redirect(
+            url_for("financeiro.agenda")
+        )
 
     emails_enviados = resultado["emails_enviados"]
     lancamentos_encontrados = resultado["lancamentos_encontrados"]
@@ -231,6 +245,7 @@ def listar_lancamentos():
         mes_selecionado=mes,
         ano_selecionado=ano,
         categorias=categorias,
+        tem_filtro=tem_filtro,
     )
 
 @financeiro_bp.route("/lancamentos/novo/", methods=["GET", "POST"])
@@ -356,54 +371,117 @@ def relatorio_mensal():
         **dados_relatorio,
     )
 
-@financeiro_bp.route('/exportar-relatorio')
+#EXPORTAR CSV 
+def texto_csv(valor):
+    if valor is None or valor == "":
+        return "Não informado"
+
+    return str(valor)
+
+
+def data_csv(data):
+    if not data:
+        return "Não informado"
+
+    return "'" + data.strftime("%d/%m/%Y")
+
+
+def valor_csv(valor):
+    if valor is None:
+        return "R$ 0,00"
+
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+@financeiro_bp.route("/exportar-relatorio")
 @login_required
 def exportar_relatorio():
-
     output = StringIO()
-    writer = csv.writer(output, delimiter=';')
+    # output.write("sep=;\n")
 
-    # Cabeçalho
+    writer = csv.writer(output, delimiter=";")
+
     writer.writerow([
         "Categoria",
-        "Fornecedor",
-        "Despesa",
-        "Origem",
-        "Pagamento",
+        "Favorecido",
+        "Tipo de custo",
+        "Conta de origem",
+        "Forma de pagamento",
         "Status",
         "Valor",
-        "Data",
+        "Data de lançamento",
+        "Data de vencimento",
+        "Data de pagamento",
     ])
 
-    transacoes = LancamentoFinanceiro.query.filter_by(
-        user_id=current_user.id
-    ).all()
+    transacoes = (
+        LancamentoFinanceiro.query
+        .filter_by(user_id=current_user.id)
+        .order_by(LancamentoFinanceiro.data_lancamento.desc())
+        .all()
+    )
 
-    # Dados do banco
     for transacao in transacoes:
+        categoria = (
+            padronizar_titulo(transacao.categoria.nome)
+            if transacao.categoria
+            else "Sem categoria"
+        )
+
+        favorecido = (
+            padronizar_titulo(transacao.favorecido)
+            if transacao.favorecido
+            else "Não informado"
+        )
+
+        tipo_custo = (
+            padronizar_titulo(transacao.tipo_custo)
+            if transacao.tipo_custo
+            else "Não informado"
+        )
+
+        conta_origem = (
+            padronizar_titulo(transacao.conta_origem)
+            if transacao.conta_origem
+            else "Não informado"
+        )
+
+        forma_pagamento = (
+            padronizar_titulo(transacao.forma_pagamento)
+            if transacao.forma_pagamento
+            else "Não informado"
+        )
+
+        status = (
+            padronizar_titulo(transacao.status)
+            if transacao.status
+            else "Não informado"
+        )
+
         writer.writerow([
-            transacao.categoria.nome,
-            transacao.favorecido,
-            transacao.tipo_custo,
-            transacao.conta_origem,
-            transacao.forma_pagamento,
-            transacao.status,
-            transacao.valor,
-            transacao.data_lancamento,
+            categoria,
+            favorecido,
+            tipo_custo,
+            conta_origem,
+            forma_pagamento,
+            status,
+            valor_csv(transacao.valor),
+            data_csv(transacao.data_lancamento),
+            data_csv(transacao.data_vencimento),
+            data_csv(transacao.data_pagamento),
         ])
 
     response = Response(
         output.getvalue(),
-        mimetype='text/csv'
+        mimetype="text/csv; charset=utf-8-sig",
     )
 
-    response.headers[
-        "Content-Disposition"
-    ] = "attachment; filename=relatorio.csv"
+    response.headers["Content-Disposition"] = "attachment; filename=relatorio.csv"
 
     return response
 
-    #PERFIL
+
+#PERFIL
 @financeiro_bp.route('/atualizar_perfil', methods=['POST'])
 @login_required
 def atualizar_perfil():
